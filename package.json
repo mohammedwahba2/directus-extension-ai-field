@@ -1,0 +1,39 @@
+{
+	"name": "directus-extension-ai-field",
+	"version": "1.0.0",
+	 "type": "module",
+	"description": "AI-powered field interface for Directus — generate content with Claude or GPT in one click.",
+	"keywords": ["directus", "directus-extension", "directus-custom-interface", "ai", "claude", "openai"],
+	"directus:extension": {
+	  "type": "bundle",
+	  "path": {
+		"app": "dist/app.js",
+		"api": "dist/api.js"
+	  },
+	  "entries": [
+		{
+		  "type": "interface",
+		  "name": "ai-field",
+		  "source": "src/interface/index.ts"
+		},
+		{
+		  "type": "endpoint",
+		  "name": "ai-field-api",
+		  "source": "src/endpoint/index.ts"
+		}
+	  ],
+	  "host": "^11.0.0"
+	},
+	"scripts": {
+	  "build": "directus-extension build",
+	  "dev": "directus-extension build --watch",
+	  "link": "directus-extension link"
+	},
+	"files": ["dist"],
+	"dependencies": {},
+	"devDependencies": {
+	  "@directus/extensions-sdk": "^12.0.0",
+	  "typescript": "^5.4.0",
+	  "vue": "^3.4.0"
+	}
+  }
