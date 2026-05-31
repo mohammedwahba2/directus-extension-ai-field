@@ -2,7 +2,7 @@
 
 Generate content with Claude, GPT, or Gemini directly inside any Directus field — no copy-pasting, no switching tabs.
 
-![Field Settings](docs/field-settings.png)
+![Field Settings](docs/field-settings-2.png)
 
 ## Why I built this
 
