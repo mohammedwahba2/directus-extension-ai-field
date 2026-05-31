@@ -60,21 +60,24 @@
   )
   
   const handleGenerate = async () => {
-    const prompt = buildPrompt(
-      customPrompt.value || props.options.promptTemplate || 'Write content for: {{value}}',
-      props.value || '',
-      props.options.tone || 'default'
-    )
+  console.log('options:', props.options)
+  console.log('provider:', props.options?.provider)
   
-    const result = await generate(
-      prompt,
-      props.options.provider || 'claude',
-      props.options.tone || 'default',
-      props.options.maxTokens || 500
-    )
-  
-    if (result) emit('input', result)
-  }
+  const prompt = buildPrompt(
+    customPrompt.value || props.options?.promptTemplate || 'Write content for: {{value}}',
+    props.value || '',
+    props.options?.tone || 'default'
+  )
+
+  const result = await generate(
+    prompt,
+    props.options?.provider || 'gemini',
+    props.options?.tone || 'default',
+    props.options?.maxTokens || 500
+  )
+
+  if (result) emit('input', result)
+}
   </script>
   
   <style scoped>

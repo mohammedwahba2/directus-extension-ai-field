@@ -17,7 +17,7 @@ export function useAi() {
     error.value = null
 
     try {
-      const res = await api.post('/ai-field/generate', {
+      const res = await api.post('/ai-field-api/generate', {
         prompt,
         provider,
         tone,

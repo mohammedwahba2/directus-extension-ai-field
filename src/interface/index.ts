@@ -20,6 +20,7 @@ export default defineInterface({
           choices: [
             { text: 'Claude (Anthropic)', value: 'claude' },
             { text: 'GPT (OpenAI)', value: 'openai' },
+            { text: 'Gemini (Google)', value: 'gemini' },
           ],
         },
       },
@@ -58,5 +59,6 @@ export default defineInterface({
       schema: { default_value: 500 },
       meta: { interface: 'input' },
     },
+    
   ],
 })

@@ -30,6 +30,28 @@ export function registerRoutes(router: Router) {
         return res.json({ content: data.choices[0].message.content, provider: 'openai' })
       }
 
+      if (provider === 'gemini') {
+        const apiKey = process.env.GEMINI_API_KEY
+        if (!apiKey) return res.status(500).json({ message: 'GEMINI_API_KEY not set' })
+      
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+            }),
+          }
+        )
+      
+        const data = await response.json() as any
+        console.log('Gemini response:', JSON.stringify(data))
+        return res.json({
+          content: data.candidates[0].content.parts[0].text,
+          provider: 'gemini',
+        })
+      }
       // Default: Claude
       const apiKey = process.env.ANTHROPIC_API_KEY
       if (!apiKey) return res.status(500).json({ message: 'ANTHROPIC_API_KEY not set' })
