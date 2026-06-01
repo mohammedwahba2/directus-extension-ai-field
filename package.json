@@ -1,6 +1,6 @@
 {
 	"name": "directus-extension-ai-field",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	 "type": "module",
 	"description": "AI-powered field interface for Directus — generate content with Claude, GPT, Gemini, Mistral, or DeepSeek in one click.",
 	"keywords": [
