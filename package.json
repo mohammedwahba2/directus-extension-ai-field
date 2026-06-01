@@ -2,8 +2,30 @@
 	"name": "directus-extension-ai-field",
 	"version": "1.0.0",
 	 "type": "module",
-	"description": "AI-powered field interface for Directus — generate content with Claude or GPT in one click.",
-	"keywords": ["directus", "directus-extension", "directus-custom-interface", "ai", "claude", "openai"],
+	"description": "AI-powered field interface for Directus — generate content with Claude, GPT, Gemini, Mistral, or DeepSeek in one click.",
+	"keywords": [
+		"directus",
+		"directus-extension",
+		"directus-custom-interface",
+		"ai",
+		"claude",
+		"openai",
+		"gemini",
+		"mistral",
+		"deepseek",
+		"llm",
+		"content-generation"
+		],
+	"license": "MIT",
+    "author": "Mohamed Wahba",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mohammedwahba2/directus-extension-ai-field.git"
+	},
+	"homepage": "https://github.com/mohammedwahba2/directus-extension-ai-field",
+	"bugs": {
+		"url": "https://github.com/mohammedwahba2/directus-extension-ai-field/issues"
+		},
 	"directus:extension": {
 	  "type": "bundle",
 	  "path": {
@@ -29,7 +51,11 @@
 	  "dev": "directus-extension build --watch",
 	  "link": "directus-extension link"
 	},
-	"files": ["dist"],
+	"files": [
+	"dist",
+	"README.md",
+	"LICENSE"
+	],
 	"dependencies": {},
 	"devDependencies": {
 	  "@directus/extensions-sdk": "^12.0.0",
