@@ -5,7 +5,7 @@ export default defineInterface({
   id: 'ai-field',
   name: 'AI Field',
   icon: 'auto_awesome',
-  description: 'Generate content using Claude or GPT directly inside Directus.',
+  description: 'Generate content using Claude, GPT, Gemini, Mistral, or DeepSeek directly inside Directus.',
   component: AiField,
   types: ['string', 'text'],
   options: [
@@ -19,8 +19,10 @@ export default defineInterface({
         options: {
           choices: [
             { text: 'Claude (Anthropic)', value: 'claude' },
-            { text: 'GPT (OpenAI)', value: 'openai' },
-            { text: 'Gemini (Google)', value: 'gemini' },
+            { text: 'GPT-4o mini (OpenAI)', value: 'openai' },
+            { text: 'Gemini 2.0 Flash (Google)', value: 'gemini' },
+            { text: 'Mistral Small (Mistral AI)', value: 'mistral' },
+            { text: 'DeepSeek Chat (DeepSeek)', value: 'deepseek' },
           ],
         },
       },
@@ -49,7 +51,7 @@ export default defineInterface({
       schema: { default_value: 'Write content for: {{value}}' },
       meta: {
         interface: 'input',
-        note: 'Use {{value}} to reference the current field value.',
+        note: 'Use {{value}} for the current field, or {{fieldName}} for any other field in the same item.',
       },
     },
     {

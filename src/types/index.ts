@@ -1,4 +1,4 @@
-export type AiProvider = 'claude' | 'openai' | 'gemini'
+export type AiProvider = 'claude' | 'openai' | 'gemini' | 'mistral' | 'deepseek'
 
 export type AiTone = 'default' | 'formal' | 'casual' | 'technical'
 

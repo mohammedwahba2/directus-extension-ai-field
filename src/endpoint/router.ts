@@ -19,16 +19,14 @@ export function registerRoutes(router: Router) {
     }
 
     try {
+      // ─── OpenAI ───────────────────────────────────────────────────────────
       if (provider === 'openai') {
         const apiKey = process.env.OPENAI_API_KEY
         if (!apiKey) return res.status(500).json({ message: 'OPENAI_API_KEY is not configured on this server.' })
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-          },
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
           body: JSON.stringify({
             model: 'gpt-4o-mini',
             messages: [{ role: 'user', content: prompt }],
@@ -38,14 +36,14 @@ export function registerRoutes(router: Router) {
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({})) as any
-          const msg = err?.error?.message || `OpenAI API error (${response.status})`
-          return res.status(502).json({ message: msg })
+          return res.status(502).json({ message: err?.error?.message || `OpenAI API error (${response.status})` })
         }
 
         const data = await response.json() as any
         return res.json({ content: data.choices[0].message.content, provider: 'openai' })
       }
 
+      // ─── Gemini ───────────────────────────────────────────────────────────
       if (provider === 'gemini') {
         const apiKey = process.env.GEMINI_API_KEY
         if (!apiKey) return res.status(500).json({ message: 'GEMINI_API_KEY is not configured on this server.' })
@@ -55,26 +53,68 @@ export function registerRoutes(router: Router) {
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-            }),
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
           }
         )
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({})) as any
-          const msg = err?.error?.message || `Gemini API error (${response.status})`
-          return res.status(502).json({ message: msg })
+          return res.status(502).json({ message: err?.error?.message || `Gemini API error (${response.status})` })
         }
 
         const data = await response.json() as any
-        return res.json({
-          content: data.candidates[0].content.parts[0].text,
-          provider: 'gemini',
-        })
+        return res.json({ content: data.candidates[0].content.parts[0].text, provider: 'gemini' })
       }
 
-      // Default: Claude
+      // ─── Mistral ──────────────────────────────────────────────────────────
+      if (provider === 'mistral') {
+        const apiKey = process.env.MISTRAL_API_KEY
+        if (!apiKey) return res.status(500).json({ message: 'MISTRAL_API_KEY is not configured on this server.' })
+
+        const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+          body: JSON.stringify({
+            model: 'mistral-small-latest',
+            messages: [{ role: 'user', content: prompt }],
+            max_tokens: maxTokens,
+          }),
+        })
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({})) as any
+          return res.status(502).json({ message: err?.message || `Mistral API error (${response.status})` })
+        }
+
+        const data = await response.json() as any
+        return res.json({ content: data.choices[0].message.content, provider: 'mistral' })
+      }
+
+      // ─── DeepSeek ─────────────────────────────────────────────────────────
+      if (provider === 'deepseek') {
+        const apiKey = process.env.DEEPSEEK_API_KEY
+        if (!apiKey) return res.status(500).json({ message: 'DEEPSEEK_API_KEY is not configured on this server.' })
+
+        const response = await fetch('https://api.deepseek.com/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+          body: JSON.stringify({
+            model: 'deepseek-chat',
+            messages: [{ role: 'user', content: prompt }],
+            max_tokens: maxTokens,
+          }),
+        })
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({})) as any
+          return res.status(502).json({ message: err?.error?.message || `DeepSeek API error (${response.status})` })
+        }
+
+        const data = await response.json() as any
+        return res.json({ content: data.choices[0].message.content, provider: 'deepseek' })
+      }
+
+      // ─── Claude (default) ─────────────────────────────────────────────────
       const apiKey = process.env.ANTHROPIC_API_KEY
       if (!apiKey) return res.status(500).json({ message: 'ANTHROPIC_API_KEY is not configured on this server.' })
 
@@ -94,8 +134,7 @@ export function registerRoutes(router: Router) {
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({})) as any
-        const msg = err?.error?.message || `Anthropic API error (${response.status})`
-        return res.status(502).json({ message: msg })
+        return res.status(502).json({ message: err?.error?.message || `Anthropic API error (${response.status})` })
       }
 
       const data = await response.json() as any

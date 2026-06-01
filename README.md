@@ -1,13 +1,13 @@
 # directus-extension-ai-field
 
-> Generate content with Claude, GPT, or Gemini directly inside any Directus field — no copy-pasting, no tab switching.
+> Generate content with Claude, GPT, Gemini, Mistral, or DeepSeek directly inside any Directus field — no copy-pasting, no tab switching.
 
 ![Field Settings](docs/field-settings-2.png)
 
 ## Features
 
 - **✦ Generate button** on any string or text field
-- **3 AI providers** — Claude (Anthropic), GPT-4o mini (OpenAI), Gemini 2.0 Flash (Google)
+- **5 AI providers** — Claude (Anthropic), GPT-4o mini (OpenAI), Gemini 2.0 Flash (Google), Mistral Small (Mistral AI), and DeepSeek Chat (DeepSeek)
 - **Reference any field** in your prompt using `{{fieldName}}` syntax
 - **Tone control** — formal, casual, technical, or default
 - **Generation history** — last 3 results, click to restore
@@ -34,6 +34,8 @@ Add your API keys to your Directus `.env` (you only need the provider you plan t
 ANTHROPIC_API_KEY=your_key_here
 OPENAI_API_KEY=your_key_here
 GEMINI_API_KEY=your_key_here
+MISTRAL_API_KEY=your_key_here
+DEEPSEEK_API_KEY=your_key_here
 ```
 
 ## Usage
@@ -64,7 +66,7 @@ Translate to Arabic: {{value}}
 
 | Option | Description | Default |
 |---|---|---|
-| Provider | Claude, GPT, or Gemini | Claude |
+| Provider | Claude, GPT, Gemini, Mistral, or DeepSeek | Claude |
 | Tone | default, formal, casual, technical | default |
 | Prompt Template | Template with `{{value}}` or `{{fieldName}}` | `Write content for: {{value}}` |
 | Max Tokens | Max length of generated content (1–4096) | 500 |
