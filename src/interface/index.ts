@@ -59,6 +59,5 @@ export default defineInterface({
       schema: { default_value: 500 },
       meta: { interface: 'input' },
     },
-    
   ],
 })

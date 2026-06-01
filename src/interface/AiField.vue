@@ -72,7 +72,8 @@ import AiButton from './AiButton.vue'
 import { useAi } from '../composables/useAi'
 import { usePrompt } from '../composables/usePrompt'
 import type { AiFieldOptions, GenerationHistory } from '../types'
-
+import { useValues } from '@directus/extensions-sdk'
+const { values } = useValues()
 const props = defineProps<{
   value: string | null
   disabled: boolean
@@ -82,7 +83,7 @@ const props = defineProps<{
   width: string
   type: string
   primaryKey?: string | number
-  values?: Record<string, any>   // other fields in the same item
+  externalValues?: Record<string, any>
   options: AiFieldOptions
 }>()
 
@@ -111,7 +112,7 @@ const handleGenerate = async () => {
     template,
     props.value || '',
     props.options?.tone || 'default',
-    props.values || {}
+   props.externalValues || values.value || {}
   )
 
   const result = await generate(
