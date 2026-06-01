@@ -8,9 +8,28 @@ export function usePrompt() {
     technical: 'Use technical, precise language.',
   }
 
-  const buildPrompt = (template: string, currentValue: string, tone: AiTone): string => {
+  // Builds the prompt and replaces placeholders with field values
+  const buildPrompt = (
+    template: string,
+    currentValue: string,
+    tone: AiTone,
+    itemValues: Record<string, any> = {}
+  ): string => {
     const toneNote = toneInstructions[tone]
-    const base = template.replace('{{value}}', currentValue || '')
+
+    // Replace current field value
+    let base = template.replace(/\{\{value\}\}/g, currentValue || '')
+
+    // Replace values from other fields
+    base = base.replace(/\{\{(\w+)\}\}/g, (match, fieldName) => {
+      if (fieldName in itemValues) {
+        const val = itemValues[fieldName]
+        return val !== null && val !== undefined ? String(val) : ''
+      }
+
+      return match
+    })
+
     return toneNote ? `${toneNote}\n\n${base}` : base
   }
 

@@ -1,4 +1,4 @@
-export type AiProvider = 'claude' | 'openai'
+export type AiProvider = 'claude' | 'openai' | 'gemini'
 
 export type AiTone = 'default' | 'formal' | 'casual' | 'technical'
 
@@ -19,4 +19,10 @@ export interface GenerateRequest {
 export interface GenerateResponse {
   content: string
   provider: AiProvider
+}
+
+export interface GenerationHistory {
+  content: string
+  provider: AiProvider
+  timestamp: number
 }
