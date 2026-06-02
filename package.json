@@ -1,65 +1,80 @@
 {
-	"name": "directus-extension-ai-field",
-	"version": "1.0.1",
-	 "type": "module",
-	"description": "AI-powered field interface for Directus — generate content with Claude, GPT, Gemini, Mistral, or DeepSeek in one click.",
-	"keywords": [
-		"directus",
-		"directus-extension",
-		"directus-custom-interface",
-		"ai",
-		"claude",
-		"openai",
-		"gemini",
-		"mistral",
-		"deepseek",
-		"llm",
-		"content-generation"
-		],
-	"license": "MIT",
-    "author": "Mohamed Wahba",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/mohammedwahba2/directus-extension-ai-field.git"
-	},
-	"homepage": "https://github.com/mohammedwahba2/directus-extension-ai-field",
-	"bugs": {
-		"url": "https://github.com/mohammedwahba2/directus-extension-ai-field/issues"
-		},
-	"directus:extension": {
-	  "type": "bundle",
-	  "path": {
-		"app": "dist/app.js",
-		"api": "dist/api.js"
-	  },
-	  "entries": [
-		{
-		  "type": "interface",
-		  "name": "ai-field",
-		  "source": "src/interface/index.ts"
-		},
-		{
-		  "type": "endpoint",
-		  "name": "ai-field-api",
-		  "source": "src/endpoint/index.ts"
-		}
-	  ],
-	  "host": "^11.0.0"
-	},
-	"scripts": {
-	  "build": "directus-extension build",
-	  "dev": "directus-extension build --watch",
-	  "link": "directus-extension link"
-	},
-	"files": [
-	"dist",
-	"README.md",
-	"LICENSE"
-	],
-	"dependencies": {},
-	"devDependencies": {
-	  "@directus/extensions-sdk": "^12.0.0",
-	  "typescript": "^5.4.0",
-	  "vue": "^3.4.0"
-	}
+  "name": "directus-extension-ai-field",
+  "version": "1.0.2",
+  "type": "module",
+  "description": "Generate content with AI in any Directus field using Claude, GPT, Gemini, Mistral, or DeepSeek.",
+  "keywords": [
+    "directus",
+    "directus-extension",
+    "directus-custom-interface",
+    "ai",
+    "claude",
+    "openai",
+    "gemini",
+    "mistral",
+    "deepseek",
+    "llm",
+    "content-generation"
+  ],
+  "license": "MIT",
+  "author": "Mohamed Wahba",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mohammedwahba2/directus-extension-ai-field.git"
+  },
+  "homepage": "https://github.com/mohammedwahba2/directus-extension-ai-field",
+  "bugs": {
+    "url": "https://github.com/mohammedwahba2/directus-extension-ai-field/issues"
+  },
+  "directus:extension": {
+    "type": "bundle",
+    "path": {
+      "app": "dist/app.js",
+      "api": "dist/api.js"
+    },
+    "entries": [
+      {
+        "type": "interface",
+        "name": "ai-field",
+        "source": "src/interface/index.ts"
+      },
+      {
+        "type": "endpoint",
+        "name": "ai-field-api",
+        "source": "src/endpoint/index.ts",
+        "sandbox": {
+          "enabled": true,
+          "requestedScopes": {
+            "request": {
+              "methods": ["POST"],
+              "urls": [
+                "https://api.anthropic.com/*",
+                "https://api.openai.com/*",
+                "https://generativelanguage.googleapis.com/*",
+                "https://api.mistral.ai/*",
+                "https://api.deepseek.com/*"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "host": "^11.0.0"
+  },
+  "scripts": {
+    "build": "directus-extension build",
+    "dev": "directus-extension build --watch",
+    "link": "directus-extension link"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@directus/extensions-sdk": "^17.0.0",
+    "typescript": "^5.4.0",
+    "vue": "^3.4.0"
   }
+}

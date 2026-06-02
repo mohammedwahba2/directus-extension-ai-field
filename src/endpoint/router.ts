@@ -1,30 +1,31 @@
-import type { Router } from 'express'
+/// <reference types="@directus/extensions/api.d.ts" />
+import type { SandboxEndpointRouter } from 'directus:api'
+import { request } from 'directus:api'
 
-export function registerRoutes(router: Router) {
-  router.post('/generate', async (req, res) => {
-    // Authentication check — must be logged in to Directus
-    const accountability = (req as any).accountability
-    if (!accountability?.user) {
-      return res.status(401).json({ message: 'Unauthorized. You must be logged in to use AI generation.' })
+export function registerRoutes(router: SandboxEndpointRouter) {
+  router.post('/generate', async (context) => {
+    // Authentication check
+    if (!context.accountability?.user) {
+      return { status: 401, body: { message: 'Unauthorized. You must be logged in to use AI generation.' } }
     }
 
-    const { prompt, provider, maxTokens = 500 } = req.body
+    const { prompt, provider, maxTokens = 500 } = context.body as any
 
     if (!prompt || typeof prompt !== 'string') {
-      return res.status(400).json({ message: 'prompt is required and must be a string' })
+      return { status: 400, body: { message: 'prompt is required and must be a string' } }
     }
 
     if (maxTokens < 1 || maxTokens > 4096) {
-      return res.status(400).json({ message: 'maxTokens must be between 1 and 4096' })
+      return { status: 400, body: { message: 'maxTokens must be between 1 and 4096' } }
     }
 
     try {
       // ─── OpenAI ───────────────────────────────────────────────────────────
       if (provider === 'openai') {
         const apiKey = process.env.OPENAI_API_KEY
-        if (!apiKey) return res.status(500).json({ message: 'OPENAI_API_KEY is not configured on this server.' })
+        if (!apiKey) return { status: 500, body: { message: 'OPENAI_API_KEY is not configured on this server.' } }
 
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        const response = await request('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
           body: JSON.stringify({
@@ -34,21 +35,21 @@ export function registerRoutes(router: Router) {
           }),
         })
 
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({})) as any
-          return res.status(502).json({ message: err?.error?.message || `OpenAI API error (${response.status})` })
+        if (response.status !== 200) {
+          const err = typeof response.data === 'object' ? response.data as any : {}
+          return { status: 502, body: { message: err?.error?.message || `OpenAI API error (${response.status})` } }
         }
 
-        const data = await response.json() as any
-        return res.json({ content: data.choices[0].message.content, provider: 'openai' })
+        const data = response.data as any
+        return { status: 200, body: { content: data.choices[0].message.content, provider: 'openai' } }
       }
 
       // ─── Gemini ───────────────────────────────────────────────────────────
       if (provider === 'gemini') {
         const apiKey = process.env.GEMINI_API_KEY
-        if (!apiKey) return res.status(500).json({ message: 'GEMINI_API_KEY is not configured on this server.' })
+        if (!apiKey) return { status: 500, body: { message: 'GEMINI_API_KEY is not configured on this server.' } }
 
-        const response = await fetch(
+        const response = await request(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
           {
             method: 'POST',
@@ -57,21 +58,21 @@ export function registerRoutes(router: Router) {
           }
         )
 
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({})) as any
-          return res.status(502).json({ message: err?.error?.message || `Gemini API error (${response.status})` })
+        if (response.status !== 200) {
+          const err = typeof response.data === 'object' ? response.data as any : {}
+          return { status: 502, body: { message: err?.error?.message || `Gemini API error (${response.status})` } }
         }
 
-        const data = await response.json() as any
-        return res.json({ content: data.candidates[0].content.parts[0].text, provider: 'gemini' })
+        const data = response.data as any
+        return { status: 200, body: { content: data.candidates[0].content.parts[0].text, provider: 'gemini' } }
       }
 
       // ─── Mistral ──────────────────────────────────────────────────────────
       if (provider === 'mistral') {
         const apiKey = process.env.MISTRAL_API_KEY
-        if (!apiKey) return res.status(500).json({ message: 'MISTRAL_API_KEY is not configured on this server.' })
+        if (!apiKey) return { status: 500, body: { message: 'MISTRAL_API_KEY is not configured on this server.' } }
 
-        const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+        const response = await request('https://api.mistral.ai/v1/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
           body: JSON.stringify({
@@ -81,21 +82,21 @@ export function registerRoutes(router: Router) {
           }),
         })
 
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({})) as any
-          return res.status(502).json({ message: err?.message || `Mistral API error (${response.status})` })
+        if (response.status !== 200) {
+          const err = typeof response.data === 'object' ? response.data as any : {}
+          return { status: 502, body: { message: err?.message || `Mistral API error (${response.status})` } }
         }
 
-        const data = await response.json() as any
-        return res.json({ content: data.choices[0].message.content, provider: 'mistral' })
+        const data = response.data as any
+        return { status: 200, body: { content: data.choices[0].message.content, provider: 'mistral' } }
       }
 
       // ─── DeepSeek ─────────────────────────────────────────────────────────
       if (provider === 'deepseek') {
         const apiKey = process.env.DEEPSEEK_API_KEY
-        if (!apiKey) return res.status(500).json({ message: 'DEEPSEEK_API_KEY is not configured on this server.' })
+        if (!apiKey) return { status: 500, body: { message: 'DEEPSEEK_API_KEY is not configured on this server.' } }
 
-        const response = await fetch('https://api.deepseek.com/chat/completions', {
+        const response = await request('https://api.deepseek.com/chat/completions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
           body: JSON.stringify({
@@ -105,20 +106,20 @@ export function registerRoutes(router: Router) {
           }),
         })
 
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({})) as any
-          return res.status(502).json({ message: err?.error?.message || `DeepSeek API error (${response.status})` })
+        if (response.status !== 200) {
+          const err = typeof response.data === 'object' ? response.data as any : {}
+          return { status: 502, body: { message: err?.error?.message || `DeepSeek API error (${response.status})` } }
         }
 
-        const data = await response.json() as any
-        return res.json({ content: data.choices[0].message.content, provider: 'deepseek' })
+        const data = response.data as any
+        return { status: 200, body: { content: data.choices[0].message.content, provider: 'deepseek' } }
       }
 
       // ─── Claude (default) ─────────────────────────────────────────────────
       const apiKey = process.env.ANTHROPIC_API_KEY
-      if (!apiKey) return res.status(500).json({ message: 'ANTHROPIC_API_KEY is not configured on this server.' })
+      if (!apiKey) return { status: 500, body: { message: 'ANTHROPIC_API_KEY is not configured on this server.' } }
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await request('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -132,16 +133,16 @@ export function registerRoutes(router: Router) {
         }),
       })
 
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({})) as any
-        return res.status(502).json({ message: err?.error?.message || `Anthropic API error (${response.status})` })
+      if (response.status !== 200) {
+        const err = typeof response.data === 'object' ? response.data as any : {}
+        return { status: 502, body: { message: err?.error?.message || `Anthropic API error (${response.status})` } }
       }
 
-      const data = await response.json() as any
-      return res.json({ content: data.content[0].text, provider: 'claude' })
+      const data = response.data as any
+      return { status: 200, body: { content: data.content[0].text, provider: 'claude' } }
 
     } catch (err: any) {
-      return res.status(500).json({ message: err?.message || 'Failed to generate content. Please try again.' })
+      return { status: 500, body: { message: err?.message || 'Failed to generate content. Please try again.' } }
     }
   })
 }
